@@ -4,7 +4,6 @@ var currentTimeEl = $('#currentDay');
 var hourContainerEl = $('#hour-container')
 
 var hourNow = dayjs().hour(23);
-console.log(dayjs().hour(23));
 
 // Wrap all code that interacts with the DOM in a call to jQuery to ensure that
 // the code isn't run until the browser has finished rendering all the elements
@@ -30,8 +29,18 @@ $(function () {
         realHour = countHour - 12;
         countHour++;
       };
-      hourBlockDiv.addClass("row time-block past")
-      console.log("24-hour time: ", countHour-1); //logs time in 24 hour format
+      hourBlockDiv.addClass("row time-block")
+
+      // changing color of div through classes
+      if (countHour-1 !== hourNow.$H) {
+        if (countHour-1 < hourNow.$H) {
+          hourBlockDiv.addClass("past");
+        } else {
+          hourBlockDiv.addClass("future");
+        }
+      } else {
+        hourBlockDiv.addClass("present");
+      }
       // if (the counthour is not equal to currenthour)
       // adding example stylization for each element
       hourBlockDiv.html("<div class='col-2 col-md-1 hour text-center py-3'>"+realHour+meridiem+"</div>"+
@@ -56,7 +65,6 @@ $(function () {
   // attribute of each time-block be used to conditionally add or remove the
   // past, present, and future classes? How can Day.js be used to get the
   // current hour in 24-hour time?
-  console.log("I am selecting the text of the first hour element:", document.querySelector("#hour-9 > div").childNodes[0]);
 
 
   //
