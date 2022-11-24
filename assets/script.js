@@ -2,8 +2,9 @@
 var saveBtnEl = $('.saveBtn');
 var currentTimeEl = $('#currentDay');
 var hourContainerEl = $('#hour-container')
+var timeBlockEl = $('#time-block')
 
-var hourNow = dayjs().hour(23);
+var hourNow = dayjs().hour(23); // 24 hour time
 
 // Wrap all code that interacts with the DOM in a call to jQuery to ensure that
 // the code isn't run until the browser has finished rendering all the elements
@@ -46,7 +47,7 @@ $(function () {
       "<div class='col-2 col-md-1 hour text-center py-3'>" + realHour+meridiem + "</div>" +
       "<textarea class='col-8 col-md-10 description' rows='3'> </textarea>" +
       "<button class='btn saveBtn col-2 col-md-1' aria-label='save'><i class='fas fa-save' aria-hidden='true'></i></button>"
-      ); // button for each block can be selected by hourBlockDiv.querySelector("hour-(num)").
+      );
       hourContainerEl.append(hourBlockDiv);
     };
 
@@ -58,6 +59,25 @@ $(function () {
   // function? How can DOM traversal be used to get the "hour-x" id of the
   // time-block containing the button that was clicked? How might the id be
   // useful when saving the description in local storage?
+
+  // Bubbles event listener to parent element in order to affect any saveBtnEl
+  hourContainerEl.on('click', '.btn', function (event) {
+    console.log("clicked!");
+    btnClicked = $(event.target);
+
+    function saveTask() {
+      console.log(btnClicked.parent()[0].id);
+      console.log(btnClicked.parent().children("textarea")[0].value);
+    };
+    
+    saveTask();
+    // get id of which save button container is being clicked; use data attributes for assigning and reading values?
+    // get the text of that container too;
+    // save that to local storage.
+    // Somehow uses event.target.(thing)
+    // Check out Module 5 Activity 9 for examples.
+  })
+  
 
   //
   // TODO: Add code to get any user input that was saved in localStorage and set
@@ -73,6 +93,6 @@ $(function () {
   }
 
   // running functions
-  renderHourElements();
   displayCurrentTime();
+  renderHourElements();
 });
