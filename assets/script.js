@@ -21,24 +21,21 @@ $(function () {
     let countHour = 9;
     let realHour = 0;
     let meridiem = "AM";
-    let taskDescription = "";
+    let taskText = "";
 
     for (let i = 0; i < 9; i++) { // 9 hours in the workday
+      taskText = "";
       var hourBlockDiv = $('<div>');
       hourBlockDiv.addClass("row time-block");
       hourBlockDiv.attr('id', "hour-"+countHour);
 
       // Load relevant index from localStorage.getItem(task[i]);
-      for (let j = 0; j < taskJSON.length; j++) {
-        if (taskJSON[j].taskNum === hourBlockDiv.attr('id')) { // if there's a match in taskJSON
-          console.log("Task found for", taskJSON[j].taskNum+'.');
-          taskDescription = taskJSON[j].taskDesc;
-        } else { // reset taskDescription
-          console.log("No task found.");
-          taskDescription = "";
+      for (let j = 0; j < taskJSON.length; j++) { // iterating through saved tasks
+        if (taskJSON[j].taskNum === hourBlockDiv.attr('id')) { // if there's a match in the saved tasks,
+          console.log("Task found for", taskJSON[j].taskNum + '.');
+          taskText = taskJSON[j].taskDesc; // add it to the task description.
         }
       }
-
       // checking AM or PM for each element created:
       if (countHour < 12) { // before noon
         realHour = countHour;
@@ -65,7 +62,7 @@ $(function () {
       // adding stylization for each element:
       hourBlockDiv.html(
       "<div class='col-2 col-md-1 hour text-center py-3'>" + realHour+meridiem + "</div>" +
-      "<textarea class='col-8 col-md-10 description' rows='3'>" + taskDescription + "</textarea>" +
+      "<textarea class='col-8 col-md-10 description' rows='3'>" + taskText + "</textarea>" +
       "<button class='btn saveBtn col-2 col-md-1' aria-label='save'><i class='fas fa-save' aria-hidden='true'></i></button>"
       );
       hourContainerEl.append(hourBlockDiv);
@@ -90,33 +87,32 @@ $(function () {
         taskNum: btnClicked.parent()[0].id, //id of parent; should be "hour-#" format
         taskDesc: btnClicked.parent().children("textarea")[0].value // textbox value
       };
+      let taskNumberIndex = parseInt(newTask.taskNum.split('-')[1]); // splits the parent id at the hyphen and grabs the number. why did i do this? keeping just in case.
+
+      // Check if there were tasks saved in that taskNum and replace the value at that key if so.
+      function blendTasks() {
+        // if key newTaskNumber's value is the same as key oldTaskNumber's value in local storage,
+        for (let i = 0; i < taskJSON.length; i++) {
+          if (taskJSON[i].taskNum === newTask.taskNum) {
+            taskJSON.splice(i, 1); // removes 1 item at index i. works even if it's empty since we push below anyway
+          }
+        }
+      taskJSON.push(newTask);
+      }
 
       console.log("Attempted task is", newTask);
 
       if (taskJSON.length === 0) { // if there are no tasks stored:
-        console.log("Empty task array.");
-        taskJSON.push(newTask);
-        console.log("New array:", taskJSON);
-        localStorage.setItem("task", JSON.stringify(taskJSON));
+        taskJSON.push(newTask); // just add the new task.
       } else { // if there are tasks stored:
         if (newTask.taskDesc === "" || newTask.taskDesc === " ") { // if task description is empty:
-          window.alert("No text entered. Nothing has been saved."); // why does clicking this early stop display time from going?
-        } else { // if task description is not empty:
-          // check if newTask.taskNum matches an existing index's taskJSON[i].taskNum.
-          for (let i = 0; i < taskJSON.length; i++) {
-            if (newTask.taskNum === taskJSON[i].taskNum) { // if there is a match and there is a previous description,
-              console.log("New task description in", newTask.taskNum + " will override old task in", taskJSON[i].taskNum + '.');
-              // update old task with new task description.
-              taskJSON[i].taskDesc = newTask.taskDesc;
-              localStorage.setItem("task", JSON.stringify(taskJSON))
-            } else { // else if no match,
-              console.log("New task will be saved in", newTask.taskNum + '.');
-              taskJSON.push(newTask);
-              localStorage.setItem("task", JSON.stringify(taskJSON))
-            }
-          }
+          window.alert("No text entered. Nothing has been saved.");  // why does clicking this early stop display time from going?
+        } else {
+          blendTasks();
         }
       }
+      localStorage.setItem("task", JSON.stringify(taskJSON));
+      taskJSON = JSON.parse(localStorage.getItem("task"));
       // Check out Module 5 Activity 9 for examples.
     });
   }
