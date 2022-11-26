@@ -62,6 +62,7 @@ $(function () {
   // displays the current date/time in page header.
 
   function displayCurrentTime() {
+    currentTimeEl.text(dayjs().format('[It is currently] hh:mm:ss A [on] MMM DD, YYYY[.]')); // inits time display immediately
     var timerInterval = setInterval(function () {
       var rightNow = dayjs().format('[It is currently] hh:mm:ss A [on] MMM DD, YYYY[.]');
       currentTimeEl.text(rightNow);
