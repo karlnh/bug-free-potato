@@ -1,22 +1,20 @@
-// DOM elements
+// DOM elements:
 var saveBtnEl = $('.saveBtn');
 var currentTimeEl = $('#currentDay');
 var hourContainerEl = $('#hour-container')
 var timeBlockEl = $('#time-block')
-
-var hourNow = dayjs().hour(23); // 24 hour time
-
+var currentHour = dayjs().get('hour');
+// Initialize localStorage if empty:
 let taskJSON = JSON.parse(localStorage.getItem("task"));
 if (taskJSON === null) {
   taskJSON = [];
   localStorage.setItem("task", JSON.stringify(taskJSON));
 }
-
 // Wrap all code that interacts with the DOM in a call to jQuery to ensure that
 // the code isn't run until the browser has finished rendering all the elements
 // in the html.
 $(function () {
-  // on page load, generates hour divs and colors them.
+  // Generate hour divs and color them:
   function renderHourElements() {
     let countHour = 9;
     let realHour = 0;
@@ -29,14 +27,14 @@ $(function () {
       hourBlockDiv.addClass("row time-block");
       hourBlockDiv.attr('id', "hour-"+countHour);
 
-      // Load relevant index from localStorage.getItem(task[i]);
+      // Load relevant index from localStorage.getItem(task[i]):
       for (let j = 0; j < taskJSON.length; j++) { // iterating through saved tasks
-        if (taskJSON[j].taskNum === hourBlockDiv.attr('id')) { // if there's a match in the saved tasks,
+        if (taskJSON[j].taskNum === hourBlockDiv.attr('id')) { // if there's a match in the saved tasks
           console.log("Task found for", taskJSON[j].taskNum + '.');
-          taskText = taskJSON[j].taskDesc; // add it to the task description.
+          taskText = taskJSON[j].taskDesc; // add it to the task description
         }
       }
-      // checking AM or PM for each element created:
+      // Check AM or PM for each element created:
       if (countHour < 12) { // before noon
         realHour = countHour;
         countHour++;
@@ -50,8 +48,8 @@ $(function () {
         countHour++;
       };
       // changing color of div through classes:
-      if (countHour-1 !== hourNow.$H) {
-        if (countHour-1 < hourNow.$H) {
+      if (countHour-1 !== currentHour) {
+        if (countHour-1 < currentHour) {
           hourBlockDiv.addClass("past");
         } else {
           hourBlockDiv.addClass("future");
@@ -69,8 +67,7 @@ $(function () {
     };
 
   }
-  // displays the current date/time in page header.
-
+  // Display the current date/time in page header:
   function displayCurrentTime() {
     currentTimeEl.text(dayjs().format('[It is currently] hh:mm:ss A [on] MMM DD, YYYY[.]')); // inits time display immediately
     var timerInterval = setInterval(function () {
@@ -82,26 +79,19 @@ $(function () {
   function saveToDo() {
     hourContainerEl.on('click', '.btn', function (event) {
       btnClicked = $(event.target);
-
       let newTask = {
         taskNum: btnClicked.parent()[0].id, //id of parent; should be "hour-#" format
         taskDesc: btnClicked.parent().children("textarea")[0].value // textbox value
       };
-      let taskNumberIndex = parseInt(newTask.taskNum.split('-')[1]); // splits the parent id at the hyphen and grabs the number. why did i do this? keeping just in case.
-
       // Check if there were tasks saved in that taskNum and replace the value at that key if so.
       function blendTasks() {
-        // if key newTaskNumber's value is the same as key oldTaskNumber's value in local storage,
-        for (let i = 0; i < taskJSON.length; i++) {
-          if (taskJSON[i].taskNum === newTask.taskNum) {
-            taskJSON.splice(i, 1); // removes 1 item at index i. works even if it's empty since we push below anyway
+        for (let i = 0; i < taskJSON.length; i++) { 
+          if (taskJSON[i].taskNum === newTask.taskNum) { // if new task's value is the same as stored task's value,
+            taskJSON.splice(i, 1); // remove 1 item at index i. works even if it's empty since we push below anyway!
           }
         }
-      taskJSON.push(newTask);
+      taskJSON.push(newTask); // either way, add the task
       }
-
-      console.log("Attempted task is", newTask);
-
       if (taskJSON.length === 0) { // if there are no tasks stored:
         taskJSON.push(newTask); // just add the new task.
       } else { // if there are tasks stored:
@@ -113,12 +103,11 @@ $(function () {
       }
       localStorage.setItem("task", JSON.stringify(taskJSON));
       taskJSON = JSON.parse(localStorage.getItem("task"));
-      // Check out Module 5 Activity 9 for examples.
     });
   }
 
   // running functions
-  displayCurrentTime();
   renderHourElements();
+  displayCurrentTime();
   saveToDo();
 });
