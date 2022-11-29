@@ -21,4 +21,4 @@ Credit is due to the MDN Web Docs and Day.js for their documentation.
 
 ## License
 
-The last section of a high-quality README file is the license. This lets other developers know what they can and cannot do with your project. If you need help choosing a license, refer to [https://choosealicense.com/](https://choosealicense.com/).
+This project is licensed under the [GNU General Public License v3](https://www.gnu.org/licenses/gpl-3.0.html).
