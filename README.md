@@ -11,7 +11,7 @@ This project was mainly for practicing using API (in this case Day.js) to modify
 
 ## Usage
 
-![Screenshot of the application.](assets/img/Work Day Scheduler.png)
+![Screenshot of the application.](./assets/img/Work Day Scheduler.png)
 
 In order to use the application, simply enter in the desired task at the desired hour the task should be started/completed, and click save on the right. The task can be overwritten with other tasks if one wishes.
 
